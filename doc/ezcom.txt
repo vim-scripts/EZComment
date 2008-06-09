@@ -1,0 +1,273 @@
+*ezcom.txt*       Vim global plugin for manipulating comments	*ezcom_manual*
+
+==============================================================================
+
+			    EZCom Reference Manual~
+
+==============================================================================
+CONTENTS						      *ezcom_contents*
+
+1. Intro .........................................|ezcom|
+2. Quick start ...................................|ezcom_quick_start|
+3. Mappings ......................................|ezcom_mappings|
+    3.1. Inserting and editing comments ..........|ezcom_edit_comments|
+    3.2. Commenting and uncommenting code ........|ezcom_comment_code|
+4. Options .......................................|ezcom_options|
+5. TODO ..........................................|ezcom_todo|
+6. Bugs ..........................................|ezcom_bugs|
+7. Author ........................................|ezcom_author|
+
+
+==============================================================================
+1. Intro							       *ezcom*
+
+EZCom is a Vim global plugin for manipulating comments in code.  It tries
+to both very flexible and very easy to use.  EZCom provides mappings for
+two general kinds of tasks: inserting and editing text comments, and
+commenting/uncommenting actual code.
+
+
+==============================================================================
+2. Quick start						   *ezcom_quick_start*
+
+Here are some -very- brief hints about the mappings to get started quickly.
+The mappings try to remind you of standard Vim commands, so just try them!  If
+something is not obvious, then check the documentation for details.
+
+To make new comments:		|gca|, |gci|, |gco|, |gcO|
+To edit comments:		|gcA|, |gcC|
+To comment code:		|gcc|
+To uncomment code:		|gcuc|
+
+
+==============================================================================
+3. Mappings						      *ezcom_mappings*
+
+EZCom mappings all begin with a map leader.  By default, this is "gc" (see
+|ezcom_options| for customizing the map leader).  The remainder of the
+mapping is chosen to be easy to remember.  For example, just as |o| can be
+used to open a new line, |gco| can be used to open a comment on a new
+line.
+
+
+3.1. Inserting and editing comments			 *ezcom_edit_comments*
+
+The following mappings are provided for inserting and editing comments.
+They are labeled by their default bindings.
+
+									 *gca*
+gca			Append a comment after the cursor (like |a|).
+
+									 *gcA*
+gcA			Append a comment at the end of the line
+			(somewhat like |A|).  If there is already a
+			comment at the end of the line, the cursor is
+			positioned for insertion at the start of the
+			comment.
+			By default, "end of line" comments start in
+			column 40 (see |ezcom_options| for customizing
+			this value) or two spaces beyond the last
+			non-comment character on the line: is greater.
+
+									 *gcC*
+gcC			Like |gcA|, but if there is already a comment at
+			the end of the line, it is cleared before
+			entering insert mode (somewhat like |C|).
+
+									 *gci*
+gci			Insert a comment before the cursor (like |i|).
+
+									 *gco*
+gco			Begin a new line below the cursor and insert
+			text into a comment (like |o|).
+
+									 *gcO*
+gcO			Begin a new line above the cursor and insert
+			text into a comment (like |O|).
+
+In general, these commands cause the line in question to be indented as
+with |==|.  In the future, a workaround may be written for those who do
+not use automatic indentation.
+
+
+3.2 Commenting and uncommenting code			  *ezcom_comment_code*
+
+The following mappings are provided for commenting and uncommenting
+code.  These should not be used for manipulating comments that are
+actually human-language text; rather, these are for (usually temporarily)
+masking ("commenting out") of segments of code.
+
+									 *gcc*
+gcc{motion}		Comment out code that {motion} moves over.
+			Currently, this works if {motion} is |linewise|,
+			or if {motion} is |characterwise| and contained
+			within one line.
+			If &commentstring =~ '%s$' (if comments have no
+			closing delimiter except for the end of a line)
+			and {motion} is |characterwise|, then |gcc| can
+			only be done reliably if {motion} goes to the
+			end of the line.
+
+								       *gccal*
+gccal			Comment out the current line ("a line").
+
+									*gcuc*
+gcuc{motion}		Uncomment the first comment in each line
+			included in {motion}.
+
+								      *gcucal*
+gcucal			Uncomment the first comment in the current line
+			("a line").
+
+								       *v_gcc*
+{Visual}gcc		Comment out the highlighted code.
+			Currently, this works if the highlighted code is 
+			|linewise|, or if t is |characterwise| and
+			contained within one line.
+			If &commentstring =~ '%s$' (if comments have no
+			closing delimiter except for the end of a line)
+			and the highlighted code is |characterwise|,
+			then |gcc| can only be done reliably if the
+			highlighted code goes to the end of the line.
+
+								      *v_gcuc*
+{Visual}gcuc		Uncomment the first comment in each line
+			included in the highlighted code.
+
+
+==============================================================================
+4. Options						       *ezcom_options*
+
+EZCom also accesses |'commentstring'| to determine the format of comments
+in a given buffer.  To obtain correctly formatted comments, use a modeline
+(see |modeline|) in a particular file, e.g.
+
+	// vim: commentstring=//%s
+
+or an autocommand (see |autocmd|) in a file such as .vimrc, e.g.
+
+	autocmd BufReadPost *.cc setlocal commentstring=//%s
+
+EZCom also allows for the customization of a number of plugin-specific
+options at global or buffer scope.  If the user customizes a variable at
+buffer scope, it overrides the global setting.  If the user customizes a
+variable at global scope, it overrides the built-in default setting.  A
+per-buffer customization might consist of a line in .vimrc such as
+
+	autocmd BufReadPost *.cc let b:EZCom_map_leader='\c'
+
+A global customization consist of a line in .vimrc such as
+
+	let g:EZCom_map_leader=',c'
+
+The following variables can be customized.
+
+				 *'b:EZCom_map_leader'* *'g:EZCom_map_leader'*
+'b:EZCom_map_leader' or
+'g:EZCom_map_leader'
+			These variables control the leading characters
+			in the EZCom mappings.  As an example, a value
+			of '\c' would change |gcA|, |gco|, and |gccal|
+			into \ccA, \cco and \ccal, respectively.
+			The default value is "gc".
+
+		       *'b:EZCom_eol_comment_pos'* *'g:EZCom_eol_comment_pos'*
+'b:EZCom_eol_comment_pos' or
+'g:EZCom_eol_comment_pos'
+			These variables give the left-most allowed
+			position of "end of line" comments.  That is,
+			"end of line" comments (see |gcA| and |gcC|)
+			will be at least this many columns from the left
+			edge of the line.
+			When calculating the position of "end of line"
+			comments, tabs are taken to be of width
+			&shiftwidth (see |'shiftwidth'|).
+			The default value is 40.
+				       *'b:EZCom_eol_pos'* *'g:EZCom_eol_pos'*
+'b:EZCom_eol_pos' or
+'g:EZCom_eol_pos'
+			These variables give the column that marks the
+			right edge of the screen (the "end of lines").
+			When |b:EZCom_linewise_style'| is "eol" and
+			|'commentstring'| has a comment-closing
+			delimiter, linewise use of |gcc| results in the
+			comment-closing delimiter being placed at this
+			position.
+			The default value is 80.
+
+					   *'b:EZCom_space'* *'g:EZCom_space'*
+'b:EZCom_space' or
+'g:EZCom_space'
+			These variables give the string used for spacing
+			between comment delimiters and the actual
+			comment text.
+			The default value is ' '.
+
+			 *'b:EZCom_linewise_style'* *'g:EZCom_linewise_style'*
+'b:EZCom_linewise_style' or
+'g:EZCom_linewise_style'
+			These variables give the style of linewise
+			comments generated by EZCom.  The two choices
+			are "eol" and "$".
+			For a value of "eol", linewise comments result
+			in the comment-closing delimeter being placed at
+			|b:EZCom_eol_pos|, e.g.
+/*	return 0;							     */
+			For a value of "$", linewise comments result in
+			the comment-closing delimeter being placed just
+			after the last non-blank character on the line,
+			e.g.
+/*	return 0; */
+			In the future ti may be possible to collapse
+			leading whitespace inside comments as well, e.g.
+	/* return 0;							     */
+			or
+	/* return 0; */
+			The default value is "eol".
+
+
+							   *g:EZCom_refresh()*
+After adjusting options, you probably want to reset EZCom's internal
+settings to match.  If buffer scope variables were changed, this can be
+done with
+
+	:call g:EZCom_refresh()<cr>
+
+If global variables were changed, it may be necessary to restart vim to
+use the updated settings.
+
+
+==============================================================================
+5. TODO								  *ezcom_todo*
+
+EZCom is very new.  Here is a partial TODO list:
+- Clean up some messy code.
+- Check spacing better.
+- Try to use <plug> to avoid exposing g:EZCom_comment_object (it is
+  already used to avoid exposing most internal functions).
+- Possibly cope with nested comments in C-like code.
+- Support GetLatestVimScripts.
+
+
+==============================================================================
+6. Bugs								  *ezcom_bugs*
+
+Uncommenting behavior on lines containing multiple comments is not
+necessarily intuitively defined.
+
+There are no -known- discrepancies between the specifications in this
+documentation and the actual behavior of EZCom.
+
+If you think you have spotted a bug, please e-mail the author at
+<mike.d.richman@gmail.com>.
+
+
+==============================================================================
+6. Author							*ezcom_author*
+
+EZCom is written by Mike Richman <mike.d.richman@gmail.com>.  Mike is
+currently enrolled in the University of Maryland Physics Ph.D. program.
+
+
+
+vim: ft=help ts=8 sw=8:

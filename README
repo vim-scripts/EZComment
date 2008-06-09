@@ -1,0 +1,31 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=2264
+
+EZComment is a Vim global plugin for manipulating comments
+in code.  It tries to both very flexible and very easy to
+use.  EZComment provides mappings for two general kinds of
+tasks: inserting and editing text comments, and
+commenting/uncommenting actual code.
+
+Use and customization of EZComment is discussed in detail in
+the provided help file.  Here is the quick start information
+(from the documentation):
+
+-------------------------------------------------------------
+Here are some -very- brief hints about the mappings to get
+started quickly.  The mappings try to remind you of standard
+Vim commands, so just try them!  If something is not
+obvious, then check the documentation for details.
+
+From normal mode:
+to make new comments |gca|, |gci|, |gco|, |gcO|
+to edit comments |gcA|, |gcC|
+
+From visual mode, or from normal mode followed by {motion}:
+to comment code |gcc|
+to uncomment code |gcuc|
+-------------------------------------------------------------
+
+Please contact the author with comments, questions, or
+suggestions!
+
+
