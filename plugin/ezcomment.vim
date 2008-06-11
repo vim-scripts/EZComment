@@ -386,17 +386,18 @@ function g:EZCom_uncomment_object (type, ...)
 	let old_col = col ('.')
 	let last_line = line ("']")
 	if a:0
-		call s:EZCom_uncomment_line ()
+		let first_line = line ("'<")
+		let last_line = line ("'>")
 	else
 		let first_line = line ("'[")
 		let last_line = line ("']")
-		call cursor (first_line)
-		call s:EZCom_uncomment_line ()
-		while line ('.') != last_line
-			exec ":normal j"
-			call s:EZCom_uncomment_line ()
-		endwhile 
 	endif
+	call cursor (first_line)
+	call s:EZCom_uncomment_line ()
+	while line ('.') != last_line
+		exec ":normal j"
+		call s:EZCom_uncomment_line ()
+	endwhile 
 	call cursor (old_line, old_col + strlen (all_left))
 endfunction
 " }}}
