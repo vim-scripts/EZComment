@@ -1,10 +1,11 @@
-*ezcom.txt*       Vim global plugin for manipulating comments	*ezcom_manual*
+*ezcomment.txt*   Vim global plugin for manipulating comments	*ezcom_manual*
 
 ==============================================================================
 
-			    EZCom Reference Manual~
+			    EZComment Reference Manual~
 
 ==============================================================================
+
 CONTENTS						      *ezcom_contents*
 
 1. Intro .........................................|ezcom|
@@ -21,33 +22,35 @@ CONTENTS						      *ezcom_contents*
 ==============================================================================
 1. Intro							       *ezcom*
 
-EZCom is a Vim global plugin for manipulating comments in code.  It tries
-to both very flexible and very easy to use.  EZCom provides mappings for
-two general kinds of tasks: inserting and editing text comments, and
-commenting/uncommenting actual code.
+EZComment is a Vim global plugin for manipulating comments in code.  It
+tries to both very flexible and very easy to use.  EZComment provides
+mappings for two general kinds of tasks: inserting and editing text
+comments, and commenting/uncommenting actual code.
 
 
 ==============================================================================
 2. Quick start						   *ezcom_quick_start*
 
 Here are some -very- brief hints about the mappings to get started quickly.
-The mappings try to remind you of standard Vim commands, so just try them!  If
-something is not obvious, then check the documentation for details.
+The mappings try to remind you of standard Vim commands, so just try them!
+If something is not obvious, then check the documentation for details.
 
-To make new comments:		|gca|, |gci|, |gco|, |gcO|
-To edit comments:		|gcA|, |gcC|
-To comment code:		|gcc|
-To uncomment code:		|gcuc|
+From normal mode:
+to make new comments		|gca|, |gci|, |gco|, |gcO|
+to edit comments		|gcA|, |gcC|
+
+From visual mode, or from normal mode followed by {motion}:
+to comment code			|gcc|
+to uncomment code		|gcuc|
 
 
 ==============================================================================
 3. Mappings						      *ezcom_mappings*
 
-EZCom mappings all begin with a map leader.  By default, this is "gc" (see
-|ezcom_options| for customizing the map leader).  The remainder of the
+EZComment mappings all begin with a map leader.  By default, this is "gc"
+(see |ezcom_options| for customizing the map leader).  The remainder of the
 mapping is chosen to be easy to remember.  For example, just as |o| can be
-used to open a new line, |gco| can be used to open a comment on a new
-line.
+used to open a new line, |gco| can be used to open a comment on a new line.
 
 
 3.1. Inserting and editing comments			 *ezcom_edit_comments*
@@ -85,17 +88,17 @@ gco			Begin a new line below the cursor and insert
 gcO			Begin a new line above the cursor and insert
 			text into a comment (like |O|).
 
-In general, these commands cause the line in question to be indented as
-with |==|.  In the future, a workaround may be written for those who do
-not use automatic indentation.
+In general, these commands cause the line in question to be indented as with
+|==|.  In the future, a workaround may be written for those who do not use
+automatic indentation.
 
 
 3.2 Commenting and uncommenting code			  *ezcom_comment_code*
 
-The following mappings are provided for commenting and uncommenting
-code.  These should not be used for manipulating comments that are
-actually human-language text; rather, these are for (usually temporarily)
-masking ("commenting out") of segments of code.
+The following mappings are provided for commenting and uncommenting code.
+These should not be used for manipulating comments that are actually
+human-language text; rather, these are for (usually temporarily) masking
+("commenting out") of segments of code.
 
 									 *gcc*
 gcc{motion}		Comment out code that {motion} moves over.
@@ -138,9 +141,9 @@ gcucal			Uncomment the first comment in the current line
 ==============================================================================
 4. Options						       *ezcom_options*
 
-EZCom also accesses |'commentstring'| to determine the format of comments
-in a given buffer.  To obtain correctly formatted comments, use a modeline
-(see |modeline|) in a particular file, e.g.
+EZComment also accesses |'commentstring'| to determine the format of
+comments in a given buffer.  To obtain correctly formatted comments, use a
+modeline (see |modeline|) in a particular file, e.g.
 
 	// vim: commentstring=//%s
 
@@ -148,7 +151,7 @@ or an autocommand (see |autocmd|) in a file such as .vimrc, e.g.
 
 	autocmd BufReadPost *.cc setlocal commentstring=//%s
 
-EZCom also allows for the customization of a number of plugin-specific
+EZComment also allows for the customization of a number of plugin-specific
 options at global or buffer scope.  If the user customizes a variable at
 buffer scope, it overrides the global setting.  If the user customizes a
 variable at global scope, it overrides the built-in default setting.  A
@@ -166,7 +169,7 @@ The following variables can be customized.
 'b:EZCom_map_leader' or
 'g:EZCom_map_leader'
 			These variables control the leading characters
-			in the EZCom mappings.  As an example, a value
+			in the EZComment mappings.  As an example, a value
 			of '\c' would change |gcA|, |gco|, and |gccal|
 			into \ccA, \cco and \ccal, respectively.
 			The default value is "gc".
@@ -183,6 +186,7 @@ The following variables can be customized.
 			comments, tabs are taken to be of width
 			&shiftwidth (see |'shiftwidth'|).
 			The default value is 40.
+
 				       *'b:EZCom_eol_pos'* *'g:EZCom_eol_pos'*
 'b:EZCom_eol_pos' or
 'g:EZCom_eol_pos'
@@ -207,7 +211,7 @@ The following variables can be customized.
 'b:EZCom_linewise_style' or
 'g:EZCom_linewise_style'
 			These variables give the style of linewise
-			comments generated by EZCom.  The two choices
+			comments generated by EZComment.  The two choices
 			are "eol" and "$".
 			For a value of "eol", linewise comments result
 			in the comment-closing delimeter being placed at
@@ -218,7 +222,7 @@ The following variables can be customized.
 			after the last non-blank character on the line,
 			e.g.
 /*	return 0; */
-			In the future ti may be possible to collapse
+			In the future it may be possible to collapse
 			leading whitespace inside comments as well, e.g.
 	/* return 0;							     */
 			or
@@ -227,20 +231,21 @@ The following variables can be customized.
 
 
 							   *g:EZCom_refresh()*
-After adjusting options, you probably want to reset EZCom's internal
-settings to match.  If buffer scope variables were changed, this can be
-done with
+After adjusting options, you probably want to reset EZComment's internal
+settings to match.  If buffer scope variables were changed, this can be done
+with
 
 	:call g:EZCom_refresh()<cr>
 
-If global variables were changed, it may be necessary to restart vim to
-use the updated settings.
+If global variables were changed, it may be necessary to restart vim to use
+the updated settings.  Don't forget to save your preferred settings as
+explained above.
 
 
 ==============================================================================
 5. TODO								  *ezcom_todo*
 
-EZCom is very new.  Here is a partial TODO list:
+EZComment is very new.  Here is a (possibly incomplete) TODO list:
 - Clean up some messy code.
 - Check spacing better.
 - Try to use <plug> to avoid exposing g:EZCom_comment_object (it is
@@ -256,7 +261,7 @@ Uncommenting behavior on lines containing multiple comments is not
 necessarily intuitively defined.
 
 There are no -known- discrepancies between the specifications in this
-documentation and the actual behavior of EZCom.
+documentation and the actual behavior of EZComment.
 
 If you think you have spotted a bug, please e-mail the author at
 <mike.d.richman@gmail.com>.
@@ -265,9 +270,11 @@ If you think you have spotted a bug, please e-mail the author at
 ==============================================================================
 6. Author							*ezcom_author*
 
-EZCom is written by Mike Richman <mike.d.richman@gmail.com>.  Mike is
+EZComment is written by Mike Richman <mike.d.richman@gmail.com>.  Mike is
 currently enrolled in the University of Maryland Physics Ph.D. program.
 
+Please -do- e-mail Mike if you are using EZComment!  He needs your ideas to
+make it more useful!
 
 
 vim: ft=help ts=8 sw=8:

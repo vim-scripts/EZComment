@@ -1,4 +1,4 @@
-" EZCom.vim		Vim global plugin for manipulating comments
+" ezcomment.vim		Vim global plugin for manipulating comments
 " Last Change:		2008.06.09
 " Maintaner:		Mike Richman <mike.d.richman@gmail.com>
 " License:		This file is placed in the public domain.
