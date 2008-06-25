@@ -30,8 +30,11 @@ endif
 if !exists ('g:EZCom_eol_pos')
 	let g:EZCom_eol_pos = 80
 endif
-if !exists ('g:EZCom_eol_comment_pos')
-	let g:EZCom_eol_comment_pos = 40
+if !exists ('g:EZCom_trailing_comment_pos')
+	let g:EZCom_trailing_comment_pos = 33
+endif
+if !exists ('g:EZCom_cpp_trailing_comment_pos')
+	let g:EZCom_cpp_trailing_comment_pos = 9
 endif
 if !exists ('g:EZCom_space')
 	let g:EZCom_space = ' '
@@ -63,8 +66,12 @@ function s:filetype_setup ()
 	if !exists ('b:EZCom_eol_pos')
 		let b:EZCom_eol_pos = g:EZCom_eol_pos
 	endif
-	if !exists ('b:EZCom_eol_comment_pos')
-		let b:EZCom_eol_comment_pos = g:EZCom_eol_comment_pos
+	if !exists ('b:EZCom_trailing_comment_pos')
+		let b:EZCom_trailing_comment_pos = g:EZCom_trailing_comment_pos
+	endif
+	if !exists ('b:EZCom_cpp_trailing_comment_pos')
+		let b:EZCom_cpp_trailing_comment_pos
+					\ = g:EZCom_cpp_trailing_comment_pos
 	endif
 	if !exists ('b:EZCom_space')
 		let b:EZCom_space = g:EZCom_space
@@ -99,9 +106,11 @@ endfunction
 " }}}
 " Function: s:eol_spaces (line, ...) {{{
 " This function returns line with tabs and/or spaces appended at the
-" end until the line is at least b:EZCom_eol_comment_pos long.
+" end until the line is at least b:EZCom_trailing_comment_pos long.
 " Optionally, specify the length rather than using
-" b:EZCom_eol_comment_pos.
+" b:EZCom_trailing_comment_pos.  If b:EZCom_trailing_comment_pos is being used,
+" and the line is a preprocessor #else or #endif, adjust so that there
+" are only a couple trailing spaces.
 function s:eol_spaces (line, ...)
 	let line = a:line
 	if a:0 == 1
@@ -109,8 +118,10 @@ function s:eol_spaces (line, ...)
 			return line
 		endif
 		let len = a:1 - 1
+	elseif a:line =~ '#else\|#endif'
+		let len = b:EZCom_cpp_trailing_comment_pos - 1
 	else
-		let len = b:EZCom_eol_comment_pos - 1
+		let len = b:EZCom_trailing_comment_pos - 1
 	endif
 	let not_using_tabs = &softtabstop
 	let out = line

@@ -62,20 +62,21 @@ They are labeled by their default bindings.
 gca			Append a comment after the cursor (like |a|).
 
 									 *gcA*
-gcA			Append a comment at the end of the line
+gcA			Append a trailing comment at the end of the line
 			(somewhat like |A|).  If there is already a
 			comment at the end of the line, the cursor is
 			positioned for insertion at the start of the
 			comment.
-			By default, "end of line" comments start in
-			column 40 (see |ezcom_options| for customizing
-			this value) or two spaces beyond the last
-			non-comment character on the line: is greater.
+			By default, trailing comments start in
+			column 33, or in column 9 for C preprocessor lines
+			(see |ezcom_options| for customizing these values)
+			or two spaces beyond the last non-comment
+			character on the line: whichever is greater.
 
 									 *gcC*
-gcC			Like |gcA|, but if there is already a comment at
-			the end of the line, it is cleared before
-			entering insert mode (somewhat like |C|).
+gcC			Like |gcA|, but if there is already trailing
+			comment, it is cleared before entering insert mode
+			(somewhat like |C|).
 
 									 *gci*
 gci			Insert a comment before the cursor (like |i|).
@@ -89,11 +90,12 @@ gcO			Begin a new line above the cursor and insert
 			text into a comment (like |O|).
 
 In general, these commands cause the line in question to be indented as with
-|==|.  In the future, a workaround may be written for those who do not use
-automatic indentation.
+|==|.  In the future, a workaround may be written for those who do not
+desire automatic indentation.
 
 
-3.2 Commenting and uncommenting code			  *ezcom_comment_code*
+3.2 Commenting and uncommenting code
+  *ezcom_comment_code*
 
 The following mappings are provided for commenting and uncommenting code.
 These should not be used for manipulating comments that are actually
@@ -174,9 +176,9 @@ The following variables can be customized.
 			into \ccA, \cco and \ccal, respectively.
 			The default value is "gc".
 
-		       *'b:EZCom_eol_comment_pos'* *'g:EZCom_eol_comment_pos'*
-'b:EZCom_eol_comment_pos' or
-'g:EZCom_eol_comment_pos'
+            *'b:EZCom_trailing_comment_pos'* *'g:EZCom_trailing_comment_pos'*
+'b:EZCom_trailing_comment_pos' or
+'g:EZCom_trailing_comment_pos'
 			These variables give the left-most allowed
 			position of "end of line" comments.  That is,
 			"end of line" comments (see |gcA| and |gcC|)
@@ -185,7 +187,14 @@ The following variables can be customized.
 			When calculating the position of "end of line"
 			comments, tabs are taken to be of width
 			&shiftwidth (see |'shiftwidth'|).
-			The default value is 40.
+			The default value is 33.
+
+    *'b:EZCom_cpp_trailing_comment_pos'* *'g:EZCom_cpp_trailing_comment_pos'*
+'b:EZCom_cpp_trailing_comment_pos' or
+'g:EZCom_cpp_trailing_comment_pos'
+			Like |b:EZCom_trailing_comment_pos|, except for C
+			preprocessor lines.
+			The default value is 9.
 
 				       *'b:EZCom_eol_pos'* *'g:EZCom_eol_pos'*
 'b:EZCom_eol_pos' or
