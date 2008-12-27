@@ -326,93 +326,6 @@ function s:EZCom_uncomment_line ()
 	exec ":normal =="
 endfunction
 " }}}
-" Function: g:EZCom_comment_object (type, ...) {{{
-" This function attempts to comment out arbitrary text objects.
-" TODO: handle multiline charwise, and clean up this mess!
-function g:EZCom_comment_object (type, ...)
-	let left = b:EZCom_left
-	let right = b:EZCom_right
-	let bleft = escape (left, '*')
-	let bright = escape (right, '*')
-	let all_left = left . b:EZCom_space
-	let all_right = strlen(right) ? b:EZCom_space.right : ''
-	let old_line = line ('.')
-	let old_col = col ('.')
-	if a:type == 'char' || a:type ==# 'v'
-		if a:0
-			let bound_left = col ("'<")
-			let bound_right = col("'>")
-			let bound_top = line ("'<")
-			let bound_bot = line ("'>")
-		else
-			let bound_left = col ("'[")
-			let bound_right = col("']")
-			let bound_top = line ("'[")
-			let bound_bot = line ("']")
-		endif
-		if bound_top != bound_bot
-			echohl WarningMsg
-			echo "EZCom cannot yet handle multiline "
-						\ . "character-wise operations "
-						\ . "-- sorry! :("
-			echo "(try a linewise operation instead)"
-			echohl None
-			return
-		endif
-		let this_line = getline ('.')
-		let beg = strpart (this_line, 0, bound_left - 1)
-		let mid = strpart (this_line, bound_left - 1,
-				         \ bound_right - bound_left + 1)
-		let end = strpart (this_line, bound_right)
-		let mid = all_left . mid . all_right
-		let this_line = beg . mid . end
-		call s:write_line (this_line)
-		let old_col = old_col + strlen (all_left)
-	elseif a:type == 'line' || a:type ==# 'V'
-		if a:0
-			let first_line = line ("'<")
-			let last_line = line ("'>")
-		else
-			let first_line = line ("'[")
-			let last_line = line ("']")
-		endif
-		call cursor (first_line)
-		call s:EZCom_comment_line ()
-		if first_line != last_line
-			while line ('.') != last_line
-				exec ":normal j"
-				call s:EZCom_comment_line ()
-			endwhile 
-		endif
-	endif
-	call cursor (old_line, old_col)
-endfunction
-" }}}
-" Function: g:EZCom_uncomment_object (type, ...) {{{
-" This function attempts to comment out arbitrary text objects.
-function g:EZCom_uncomment_object (type, ...)
-	let left = b:EZCom_left
-	let all_left = left . b:EZCom_space
-	let old_line = line ('.')
-	let old_col = col ('.')
-	let last_line = line ("']")
-	if a:0
-		let first_line = line ("'<")
-		let last_line = line ("'>")
-	else
-		let first_line = line ("'[")
-		let last_line = line ("']")
-	endif
-	call cursor (first_line)
-	call s:EZCom_uncomment_line ()
-	while line ('.') != last_line
-		exec ":normal j"
-		call s:EZCom_uncomment_line ()
-	endwhile 
-	call cursor (old_line, old_col + strlen (all_left))
-endfunction
-" }}}
-" }}}
 " Section: Maps {{{
 " Function: s:make_map (mode, map, name, call) {{{
 " This function creates a map in the given mode ('op', 'n', or 'v')
@@ -420,23 +333,27 @@ endfunction
 function s:make_map (mode, map, name, call)
 	if a:mode == 'op'
 		exec ":nmap <silent> <buffer> ".b:EZCom_map_leader.a:map
-					\ . " :set opfunc=".a:call."<cr>g@"
+					\ . " :call g:EZCom_refresh()<cr>"
+					\ . ":set opfunc=".a:call."<cr>g@"
 		exec ":vmap <silent> <buffer> ".b:EZCom_map_leader.a:map
-					\ . " :\<c-u>call ".a:call
-					\ . " (visualmode(),1)<cr>"
+					\ . " :\<c-u>call g:EZCom_refresh()<cr>"
+					\ . ":\<c-u>call ".a:call
+					\ . "(visualmode(),1)<cr>"
 	elseif a:mode == 'n'
 		let the_call = substitute (a:call, '^s:', '<sid>', '')
 		exec "nnoremap <script> <buffer> <plug>EZCom".a:name
-					\ . " <SID>".a:name
-		exec "nnoremap <buffer> <SID>".a:name." :call ".the_call."<cr>"
+					\ . " <sid>".a:name
+		exec "nnoremap <buffer> <sid>".a:name
+					\ . " :call g:EZCom_refresh()<cr>"
+					\ . ":call ".the_call."<cr>"
 		exec "nmap <silent> <buffer> "
 					\ . b:EZCom_map_leader.a:map
 					\ . " <plug>EZCom".a:name
 	elseif a:mode == 'v'
 		let the_call = substitute (a:call, '^s:', '<sid>', '')
 		exec "nnoremap <script> <buffer> <plug>EZCom".a:name
-					\ . " <SID>".a:name
-		exec "nnoremap <buffer> <SID>".a:name." :call ".the_call."<cr>"
+					\ . " <sid>".a:name
+		exec "nnoremap <buffer> <sid>".a:name." :call ".the_call."<cr>"
 		exec "nmap <silent> <buffer> "
 					\ . b:EZCom_map_leader.a:map
 					\ . " <plug>EZCom".a:name
